@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:            #FFFFFF;
+    --sage:          #EAF3EC;   /* soft green section bg */
+    --green-deep:    #3F6B52;   /* header / heading text */
+    --green-mid:     #6F9C82;
+    --gold:          #C9A24B;   /* accent / active highlight */
+    --gold-soft:     #F6ECD6;
+    --ink:           #2B332E;   /* body text, not pure black */
+    --ink-muted:     #74847B;
+    --line:          #E4EBE6;
+    --danger-soft:   #C4736A;
+    --radius:        16px;
+    --shadow:        0 6px 24px rgba(63,107,82,0.08);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); }
+  body{
+    font-family:'Nunito Sans', sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Amiri', serif; margin:0; }
+
+  /* ---------- Motif geometris (signature element) ---------- */
+  .motif{
+    position:absolute; inset:0;
+    opacity:0.14;
+    background-image:
+      linear-gradient(30deg, transparent 48%, rgba(255,255,255,.9) 48% 52%, transparent 52%),
+      linear-gradient(-30deg, transparent 48%, rgba(255,255,255,.9) 48% 52%, transparent 52%),
+      linear-gradient(90deg, transparent 48%, rgba(255,255,255,.9) 48% 52%, transparent 52%);
+    background-size: 42px 72px;
+    pointer-events:none;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(160deg, var(--green-deep), var(--green-mid));
+    color:#fff;
+    padding:28px 20px 34px;
+    text-align:center;
+  }
+  header .logo{
+    width:56px; height:56px; border-radius:50%;
+    object-fit:cover; margin-bottom:10px; border:2px solid rgba(255,255,255,.7);
+  }
+  header h1{ font-size:1.5rem; letter-spacing:.3px; }
+  header p{ margin:6px 0 0; font-size:.85rem; opacity:.9; }
+
+  /* ---------- Layout ---------- */
+  main{ max-width:520px; margin:0 auto; padding:18px 16px 60px; }
+  section{ margin-bottom:26px; scroll-margin-top:56px; }
+  .section-title{
+    font-size:1.05rem; color:var(--green-deep); margin-bottom:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-title::before{
+    content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--gold); display:inline-block;
+  }
+
+  /* ---------- Kartu jadwal sholat ---------- */
+  .sholat-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  }
+  .sholat-card{
+    background:var(--sage); border-radius:var(--radius);
+    padding:14px 6px; text-align:center;
+    border:1px solid var(--line);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .sholat-card.active{
+    background:var(--gold-soft); border-color:var(--gold);
+    transform:translateY(-2px);
+  }
+  .sholat-card .nama{ font-size:.72rem; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.5px; }
+  .sholat-card.active .nama{ color:#8a6d1f; }
+  .sholat-card .jam{ font-size:1.15rem; font-weight:800; color:var(--green-deep); margin-top:4px; }
+  .sholat-card.active .jam{ color:#8a6d1f; }
+  .tgl-hari-ini{ text-align:center; color:var(--ink-muted); font-size:.8rem; margin-bottom:10px; }
+  .sumber-note{ text-align:center; color:var(--ink-muted); font-size:.7rem; margin-top:10px; }
+
+  .bulan-selector{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; margin-bottom:14px;
+  }
+  .bulan-selector label{ font-size:.82rem; color:var(--ink-muted); font-weight:700; }
+  .bulan-selector select{
+    flex:1; font-family:inherit; font-size:.88rem; font-weight:700; color:var(--green-deep);
+    background:var(--sage); border:1px solid var(--line); border-radius:10px;
+    padding:9px 10px; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233F6B52' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center;
+  }
+
+  .rekap-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;
+  }
+  .rekap-box{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 14px;
+  }
+  .rekap-box .label{ font-size:.72rem; color:var(--ink-muted); }
+  .rekap-box .nilai{ font-size:1.05rem; font-weight:800; margin-top:3px; }
+  .rekap-box.masuk .nilai{ color:var(--green-deep); }
+  .rekap-box.keluar .nilai{ color:var(--danger-soft); }
+
+  .kas-block{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; margin-bottom:20px; box-shadow:var(--shadow);
+  }
+  .kas-title{
+    font-family:'Nunito Sans', sans-serif; font-weight:800; font-size:1rem;
+    color:var(--green-deep); margin-bottom:12px;
+  }
+  .warn-box{
+    background:#FBEFEA; border:1px solid #E9C4B4; color:#8a4a2f;
+    border-radius:10px; padding:10px 12px; font-size:.76rem; margin-bottom:12px; line-height:1.5;
+  }
+  .saldo-ringkas{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;
+  }
+  .ringkas-item{
+    background:var(--sage); border-radius:12px; padding:10px 8px; text-align:center;
+  }
+  .ringkas-item .label{ font-size:.68rem; color:var(--ink-muted); }
+  .ringkas-item .nilai{ font-size:.85rem; font-weight:800; margin-top:3px; color:var(--green-deep); }
+  .ringkas-item.plus .nilai{ color:var(--green-deep); }
+  .ringkas-item.minus .nilai{ color:var(--danger-soft); }
+  .kas-block .saldo-card{ padding:16px; margin-bottom:14px; }
+  .kas-block table{ font-size:.78rem; }
+
+  /* ---------- Nav sticky (scroll ke section, bukan ganti tampilan) ---------- */
+  .section-nav{
+    position:sticky; top:0; z-index:10;
+    display:flex; background:#fff; border-bottom:1px solid var(--line);
+    box-shadow:0 2px 10px rgba(63,107,82,0.06);
+  }
+  .nav-btn{
+    flex:1; border:none; background:transparent; padding:13px 6px;
+    font-family:inherit; font-weight:700; font-size:.74rem; color:var(--ink-muted);
+    cursor:pointer; transition:.15s ease; border-bottom:3px solid transparent;
+    text-align:center; line-height:1.3;
+  }
+  .nav-btn.active{ color:var(--green-deep); border-bottom-color:var(--gold); }
+
+  /* ---------- Kajian ---------- */
+  .kajian-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);
+  }
+  .kajian-card .tgl{
+    display:inline-block; background:var(--gold-soft); color:#8a6d1f;
+    font-size:.72rem; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:8px;
+  }
+  .kajian-card h3{ font-size:1rem; color:var(--ink); font-family:'Nunito Sans',sans-serif; font-weight:800; }
+  .kajian-card .meta{ font-size:.8rem; color:var(--ink-muted); margin-top:4px; line-height:1.5; }
+
+  /* ---------- Keuangan ---------- */
+  .saldo-card{
+    background:linear-gradient(160deg, var(--green-deep), var(--green-mid));
+    color:#fff; border-radius:var(--radius); padding:20px; text-align:center;
+    margin-bottom:16px;
+  }
+  .saldo-card .label{ font-size:.78rem; opacity:.85; }
+  .saldo-card .nilai{ font-size:1.7rem; font-weight:800; margin-top:4px; }
+
+  table{ width:100%; border-collapse:collapse; font-size:.82rem; }
+  th{ text-align:left; color:var(--ink-muted); font-weight:700; padding:8px 6px; border-bottom:1px solid var(--line); }
+  td{ padding:9px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .jenis-masuk{ color:var(--green-deep); font-weight:700; }
+  .jenis-keluar{ color:var(--danger-soft); font-weight:700; }
+
+  .empty{ text-align:center; color:var(--ink-muted); font-size:.85rem; padding:24px 0; }
+  footer{ text-align:center; color:var(--ink-muted); font-size:.72rem; padding:10px 0 30px; }
+
+  @media (prefers-reduced-motion: reduce){
+    .sholat-card{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="motif"></div>
+  <img class="logo" id="logoMasjid" style="display:none;">
+  <h1 id="namaMasjid">Memuat...</h1>
+  <p id="alamatMasjid"></p>
+</header>
+
+<div id="apiStatus" style="display:none;max-width:520px;margin:10px auto;padding:10px 16px;background:#FBEFEA;border:1px solid #E9C4B4;color:#8a4a2f;border-radius:10px;font-size:.78rem;line-height:1.5;"></div>
+
+<nav class="section-nav" id="sectionNav">
+  <button class="nav-btn active" data-target="sec-sholat">Jadwal Waktu Sholat</button>
+  <button class="nav-btn" data-target="sec-kajian">Jadwal Kajian</button>
+  <button class="nav-btn" data-target="sec-keuangan">Laporan Keuangan</button>
+</nav>
+
+<main>
+  <section id="sec-sholat">
+    <div class="section-title">Jadwal Sholat Hari Ini</div>
+    <div class="tgl-hari-ini" id="tglHariIni"></div>
+    <div class="sholat-grid" id="sholatGrid"></div>
+    <div class="sumber-note" id="sumberSholat"></div>
+  </section>
+
+  <section id="sec-kajian">
+    <div class="section-title">Jadwal Kajian</div>
+    <div id="kajianList"></div>
+  </section>
+
+  <section id="sec-keuangan">
+    <div class="section-title">Laporan Keuangan</div>
+    <div class="bulan-selector">
+      <label for="pilihBulan">Bulan</label>
+      <select id="pilihBulan"></select>
+    </div>
+
+    <div id="kasContainer"></div>
+  </section>
+
+  <footer>
+  Website ini otomatis mengambil data dari Google Spreadsheet.
+  <br><button id="testApiBtn" style="margin-top:8px;border:1px solid var(--line);background:var(--sage);color:var(--green-deep);border-radius:8px;padding:7px 10px;font:inherit;font-size:.72rem;font-weight:700;cursor:pointer;">Tes koneksi data</button>
+  <div id="testApiResult" style="margin-top:8px;font-size:.7rem;"></div>
+</footer>
+</main>
+
+<template id="tplKas">
+  <div class="kas-block">
+    <h3 class="kas-title"></h3>
+    <div class="warn-box" style="display:none;"></div>
+
+    <div class="saldo-ringkas">
+      <div class="ringkas-item">
+        <div class="label">Saldo Awal</div>
+        <div class="nilai saldo-awal">Rp 0</div>
+      </div>
+      <div class="ringkas-item plus">
+        <div class="label">Pendapatan</div>
+        <div class="nilai total-pendapatan">Rp 0</div>
+      </div>
+      <div class="ringkas-item minus">
+        <div class="label">Pengeluaran</div>
+        <div class="nilai total-pengeluaran">Rp 0</div>
+      </div>
+    </div>
+
+    <div class="saldo-card">
+      <div class="label">Saldo Akhir Bulan</div>
+      <div class="nilai saldo-akhir">Rp 0</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Tanggal</th><th>Transaksi</th><th>Jenis</th><th>Jumlah</th></tr>
+      </thead>
+      <tbody class="keuangan-body"></tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+
+  // =========================================================
+  // KONFIGURASI API
+  // Ganti URL_API dengan URL Web App Apps Script setelah deploy.
+  // =========================================================
+  const URL_API = 'https://script.google.com/macros/s/AKfycbwPXaxdaxyHBADQjQ_oN6KH0SGVF0ZC8i3qaQyKUHQZQKCanGv-YHcp6viE0P2o_ajj/exec';
+
+  async function apiGet(action, params = {}) {
+    const url = new URL(URL_API);
+    url.searchParams.set('action', action);
+
+    Object.keys(params).forEach(function(key) {
+      if (params[key] !== undefined && params[key] !== null) {
+        url.searchParams.set(key, params[key]);
+      }
+    });
+
+    console.log('[API] Request:', url.toString());
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-store'
+      });
+
+      console.log('[API] HTTP:', response.status, response.statusText);
+
+      const text = await response.text();
+      console.log('[API] Response:', text);
+
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseError) {
+        throw new Error('Respons API bukan JSON: ' + text.substring(0, 300));
+      }
+
+      if (!result.ok) {
+        throw new Error(result.error || 'API mengembalikan error.');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('[API] Gagal:', action, error);
+      throw error;
+    }
+  }
+  function showApiError(err){
+    console.error(err);
+    const status = document.getElementById('apiStatus');
+    if (status){
+      status.style.display = 'block';
+      status.innerHTML =
+        '<strong>Gagal mengambil data.</strong><br>' +
+        String(err && err.message ? err.message : err) +
+        '<br><small>Buka DevTools → Console untuk melihat detail API.</small>';
+    }
+  }
+
+  function formatRupiah(n){
+    n = Number(n) || 0;
+    return 'Rp ' + n.toLocaleString('id-ID');
+  }
+
+  // ---------- Info Masjid ----------
+  apiGet("info").then(function(info){
+    document.getElementById('namaMasjid').textContent = info.NamaMasjid || 'Nama Masjid';
+    document.getElementById('alamatMasjid').textContent = info.Alamat || '';
+    if (info.LogoURL){
+      const img = document.getElementById('logoMasjid');
+      img.src = info.LogoURL;
+      img.style.display = 'inline-block';
+    }
+  }).catch(showApiError);
+
+  // ---------- Jadwal Sholat (dari sheet, diisi manual dari data Kemenag) ----------
+  apiGet("jadwal").then(function(jadwal){
+    const grid = document.getElementById('sholatGrid');
+    const tglEl = document.getElementById('tglHariIni');
+    const sumberEl = document.getElementById('sumberSholat');
+    if (!jadwal){
+      tglEl.textContent = '';
+      sumberEl.textContent = '';
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">Jadwal untuk hari ini belum tersedia di Spreadsheet.</div>';
+      return;
+    }
+    tglEl.textContent = jadwal.tanggal;
+    sumberEl.textContent = '';
+    const waktu = [
+      ['Subuh', jadwal.subuh], ['Terbit', jadwal.terbit], ['Dzuhur', jadwal.dzuhur],
+      ['Ashar', jadwal.ashar], ['Maghrib', jadwal.maghrib], ['Isya', jadwal.isya]
+    ];
+    const now = new Date();
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    let activeIdx = -1, bestDiff = Infinity;
+    waktu.forEach(function(w, idx){
+      const parts = String(w[1]).split(':');
+      if (parts.length < 2) return;
+      const mins = parseInt(parts[0],10)*60 + parseInt(parts[1],10);
+      const diff = nowMin - mins;
+      if (diff >= 0 && diff < bestDiff){ bestDiff = diff; activeIdx = idx; }
+    });
+    grid.innerHTML = waktu.map(function(w, idx){
+      return '<div class="sholat-card' + (idx===activeIdx ? ' active' : '') + '">' +
+        '<div class="nama">' + w[0] + '</div>' +
+        '<div class="jam">' + (w[1] || '-') + '</div></div>';
+    }).join('');
+  }).catch(showApiError);
+
+  // ---------- Kajian ----------
+  apiGet("kajian").then(function(list){
+    const el = document.getElementById('kajianList');
+    if (!list || list.length === 0){
+      el.innerHTML = '<div class="empty">Belum ada jadwal kajian.</div>';
+      return;
+    }
+    el.innerHTML = list.map(function(k){
+      return '<div class="kajian-card">' +
+        '<span class="tgl">' + k.tanggal + (k.waktu ? ' • ' + k.waktu : '') + '</span>' +
+        '<h3>' + k.tema + '</h3>' +
+        '<div class="meta">Pemateri: ' + (k.pemateri || '-') + '<br>Lokasi: ' + (k.lokasi || '-') + '</div>' +
+        '</div>';
+    }).join('');
+  }).catch(showApiError);
+
+  // ---------- Keuangan (2 kas ditampilkan sekaligus, saldo awal dibawa dari bulan sebelumnya) ----------
+  function renderSatuKas(container, judul, rekap){
+    const block = document.getElementById('tplKas').content.cloneNode(true);
+
+    block.querySelector('.kas-title').textContent = judul + ' — ' + rekap.label;
+    block.querySelector('.saldo-awal').textContent = formatRupiah(rekap.saldoAwal);
+    block.querySelector('.total-pendapatan').textContent = '+ ' + formatRupiah(rekap.totalPendapatan);
+    block.querySelector('.total-pengeluaran').textContent = '- ' + formatRupiah(rekap.totalPengeluaran);
+    block.querySelector('.saldo-akhir').textContent = formatRupiah(rekap.saldoAkhir);
+
+    const warnBox = block.querySelector('.warn-box');
+    if (rekap.peringatan && rekap.peringatan.length > 0){
+      warnBox.style.display = 'block';
+      warnBox.innerHTML = '⚠️ Ada data perlu diperiksa:<br>' + rekap.peringatan.join('<br>');
+    }
+
+    const body = block.querySelector('.keuangan-body');
+    if (!rekap.transaksi || rekap.transaksi.length === 0){
+      body.innerHTML = '<tr><td colspan="4" class="empty">Belum ada transaksi bulan ini.</td></tr>';
+    } else {
+      body.innerHTML = rekap.transaksi.map(function(t){
+        const masuk = (String(t.jenis).trim().toLowerCase() === 'pendapatan');
+        const cls = masuk ? 'jenis-masuk' : 'jenis-keluar';
+        const sign = masuk ? '+ ' : '- ';
+        return '<tr><td>' + t.tanggal + '</td><td>' + t.nama + '</td>' +
+          '<td class="' + cls + '">' + t.jenis + '</td>' +
+          '<td class="' + cls + '">' + sign + formatRupiah(t.nominal) + '</td></tr>';
+      }).join('');
+    }
+
+    return block;
+  }
+
+  function muatRekapBulan(bulanValue){
+    const kasContainer = document.getElementById('kasContainer');
+    kasContainer.innerHTML = '<div class="empty">Memuat...</div>';
+    apiGet("rekap", { bulan: bulanValue }).then(function(data){
+      kasContainer.innerHTML = '';
+      kasContainer.appendChild(renderSatuKas(kasContainer, 'Kas Operasional Dakwah', data.dakwah));
+      kasContainer.appendChild(renderSatuKas(kasContainer, "Kas Usaha Yayasan Ibnu Mas'ud", data.usaha));
+    }).catch(showApiError);
+  }
+
+  apiGet("bulan").then(function(bulanList){
+    const select = document.getElementById('pilihBulan');
+    if (!bulanList || bulanList.length === 0){
+      select.innerHTML = '<option>Belum ada data</option>';
+      document.getElementById('kasContainer').innerHTML = '<div class="empty">Belum ada transaksi.</div>';
+      return;
+    }
+    select.innerHTML = bulanList.map(function(b){
+      return '<option value="' + b.value + '">' + b.label + '</option>';
+    }).join('');
+    select.onchange = function(){ muatRekapBulan(select.value); };
+    muatRekapBulan(bulanList[0].value);
+  }).catch(showApiError);
+
+  document.getElementById('testApiBtn').addEventListener('click', async function(){
+    const result = document.getElementById('testApiResult');
+    result.textContent = 'Menguji API...';
+
+    const actions = ['info','jadwal','kajian','bulan'];
+    const hasil = [];
+
+    for (const action of actions){
+      try {
+        const data = await apiGet(action);
+        hasil.push(action + ': OK');
+      } catch (err) {
+        hasil.push(action + ': GAGAL — ' + (err.message || err));
+      }
+    }
+
+    result.innerHTML = hasil.join('<br>');
+  });
+
+  // ---------- Nav: klik untuk scroll ke section, highlight otomatis saat discroll ----------
+  const navButtons = document.querySelectorAll('.nav-btn');
+  navButtons.forEach(function(btn){
+    btn.addEventListener('click', function(){
+      document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth' });
+    });
+  });
+
+  const navObserver = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if (entry.isIntersecting){
+        navButtons.forEach(b => b.classList.remove('active'));
+        const match = document.querySelector('.nav-btn[data-target="' + entry.target.id + '"]');
+        if (match) match.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-56px 0px -70% 0px', threshold: 0 });
+
+  ['sec-sholat', 'sec-kajian', 'sec-keuangan'].forEach(function(id){
+    const el = document.getElementById(id);
+    if (el) navObserver.observe(el);
+  });
+</script>
+</body>
+</html>
