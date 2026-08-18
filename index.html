@@ -60,7 +60,7 @@
 
   /* ---------- Layout ---------- */
   main{ max-width:520px; margin:0 auto; padding:18px 16px 60px; }
-  section{ margin-bottom:26px; scroll-margin-top:56px; }
+  section{ margin-bottom:26px; }
   .section-title{
     font-size:1.05rem; color:var(--green-deep); margin-bottom:12px;
     display:flex; align-items:center; gap:8px;
@@ -89,6 +89,22 @@
   .sholat-card .jam{ font-size:1.15rem; font-weight:800; color:var(--green-deep); margin-top:4px; }
   .sholat-card.active .jam{ color:#8a6d1f; }
   .tgl-hari-ini{ text-align:center; color:var(--ink-muted); font-size:.8rem; margin-bottom:10px; }
+
+  /* ---------- Countdown waktu sholat berikutnya ---------- */
+  .countdown-sholat{
+    text-align:center; margin-bottom:16px;
+  }
+  .countdown-sholat .cd-label{
+    font-size:.74rem; color:var(--ink-muted); font-weight:700;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+  .countdown-sholat .cd-nama{
+    font-family:'Amiri', serif; font-size:1.1rem; color:var(--green-deep); margin:2px 0 4px;
+  }
+  .countdown-sholat .cd-angka{
+    font-size:1.6rem; font-weight:800; color:#8a6d1f;
+    font-variant-numeric:tabular-nums; letter-spacing:1px;
+  }
   .sumber-note{ text-align:center; color:var(--ink-muted); font-size:.7rem; margin-top:10px; }
 
   .bulan-selector{
@@ -141,20 +157,6 @@
   .kas-block .saldo-card{ padding:16px; margin-bottom:14px; }
   .kas-block table{ font-size:.78rem; }
 
-  /* ---------- Nav sticky (scroll ke section, bukan ganti tampilan) ---------- */
-  .section-nav{
-    position:sticky; top:0; z-index:10;
-    display:flex; background:#fff; border-bottom:1px solid var(--line);
-    box-shadow:0 2px 10px rgba(63,107,82,0.06);
-  }
-  .nav-btn{
-    flex:1; border:none; background:transparent; padding:13px 6px;
-    font-family:inherit; font-weight:700; font-size:.74rem; color:var(--ink-muted);
-    cursor:pointer; transition:.15s ease; border-bottom:3px solid transparent;
-    text-align:center; line-height:1.3;
-  }
-  .nav-btn.active{ color:var(--green-deep); border-bottom-color:var(--gold); }
-
   /* ---------- Kajian ---------- */
   .kajian-card{
     background:#fff; border:1px solid var(--line); border-radius:var(--radius);
@@ -185,6 +187,28 @@
   .empty{ text-align:center; color:var(--ink-muted); font-size:.85rem; padding:24px 0; }
   footer{ text-align:center; color:var(--ink-muted); font-size:.72rem; padding:10px 0 30px; }
 
+  /* ---------- Ajakan Infaq ---------- */
+  .infaq-block{
+    background:linear-gradient(160deg, var(--gold-soft), #fff);
+    border:1px solid var(--gold); border-radius:var(--radius);
+    padding:18px; margin-top:18px; text-align:center;
+  }
+  .infaq-judul{ font-family:'Amiri', serif; font-size:1.15rem; color:#8a6d1f; margin-bottom:8px; }
+  .infaq-teks{ font-size:.85rem; color:var(--ink); line-height:1.55; margin:0 0 14px; }
+  .infaq-rekening{
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:12px; margin-bottom:14px;
+  }
+  .infaq-rekening .bank-nama{ font-size:.78rem; color:var(--ink-muted); font-weight:700; }
+  .infaq-rekening .no-rek{ font-size:1.15rem; font-weight:800; color:var(--green-deep); margin:3px 0; letter-spacing:.5px; }
+  .infaq-rekening .an-rek{ font-size:.78rem; color:var(--ink-muted); }
+  .infaq-wa{
+    display:inline-block; background:var(--green-deep); color:#fff; text-decoration:none;
+    font-weight:700; font-size:.85rem; padding:12px 22px; border-radius:999px;
+    transition:transform .15s ease;
+  }
+  .infaq-wa:active{ transform:scale(.97); }
+
   @media (prefers-reduced-motion: reduce){
     .sholat-card{ transition:none; }
   }
@@ -195,9 +219,6 @@
   header .logo{width:72px;height:72px;display:block;margin:0 auto 10px;border-radius:50%;object-fit:cover}
   header h1{font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.25;overflow-wrap:anywhere}
   header p{font-size:.82rem;line-height:1.45;overflow-wrap:anywhere}
-  .section-nav{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-  .section-nav::-webkit-scrollbar{display:none}
-  .nav-btn{flex:1 0 33.333%;min-width:110px;min-height:48px;padding:10px 7px;font-size:.72rem}
   main{width:100%;max-width:720px;margin:0 auto;padding:16px 12px 42px}
   section{width:100%;margin-bottom:24px}
   .section-title{font-size:1rem}
@@ -214,7 +235,6 @@
   @media (min-width:560px){.sholat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
   @media (max-width:380px){
     main{padding-left:10px;padding-right:10px}
-    .nav-btn{min-width:105px;font-size:.68rem}
     .sholat-grid{gap:6px}
     .sholat-card .jam{font-size:1rem}
     .saldo-ringkas{gap:5px}
@@ -231,9 +251,6 @@ header{padding:24px 16px 30px}
 header .logo{width:72px;height:72px;display:block;margin:0 auto 10px;border-radius:50%;object-fit:cover}
 header h1{font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.25;overflow-wrap:anywhere}
 header p{font-size:.82rem;line-height:1.45;overflow-wrap:anywhere}
-.section-nav{width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
-.section-nav::-webkit-scrollbar{display:none}
-.nav-btn{flex:1 0 33.333%;min-width:110px;min-height:48px;padding:10px 7px;font-size:.72rem}
 main{width:100%;max-width:720px;margin:0 auto;padding:16px 12px 42px}
 section{width:100%;margin-bottom:24px}
 .sholat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
@@ -246,7 +263,6 @@ section{width:100%;margin-bottom:24px}
 @media (min-width:560px){.sholat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
 @media (max-width:380px){
  main{padding-left:10px;padding-right:10px}
- .nav-btn{min-width:105px;font-size:.68rem}
  .saldo-ringkas{gap:5px}
  .rekap-grid{grid-template-columns:1fr}
 }
@@ -261,8 +277,6 @@ table { max-width: 100%; }
   body { font-size: 14px; }
   header { padding-left: 14px; padding-right: 14px; }
   main { padding-left: 10px; padding-right: 10px; }
-  .section-nav { width: 100%; }
-  .section-nav > * { min-width: 0; }
   .sholat-grid, .rekap-grid { width: 100%; }
 }
 
@@ -277,16 +291,11 @@ table { max-width: 100%; }
   <p id="alamatMasjid"></p>
 </header>
 
-<nav class="section-nav" id="sectionNav">
-  <button class="nav-btn active" data-target="sec-sholat">Jadwal Waktu Sholat</button>
-  <button class="nav-btn" data-target="sec-kajian">Jadwal Kajian</button>
-  <button class="nav-btn" data-target="sec-keuangan">Laporan Keuangan</button>
-</nav>
-
 <main>
   <section id="sec-sholat">
     <div class="section-title">Jadwal Sholat Hari Ini</div>
     <div class="tgl-hari-ini" id="tglHariIni"></div>
+    <div class="countdown-sholat" id="countdownSholat"></div>
     <div class="sholat-grid" id="sholatGrid"></div>
     <div class="sumber-note" id="sumberSholat"></div>
   </section>
@@ -294,6 +303,11 @@ table { max-width: 100%; }
   <section id="sec-kajian">
     <div class="section-title">Jadwal Kajian</div>
     <div id="kajianList"></div>
+  </section>
+
+  <section id="sec-pengumuman">
+    <div class="section-title">Pengumuman</div>
+    <div id="pengumumanList"></div>
   </section>
 
   <section id="sec-keuangan">
@@ -304,9 +318,29 @@ table { max-width: 100%; }
     </div>
 
     <div id="kasContainer"></div>
+
+    <!-- ================= AJAKAN INFAQ =================
+         Ganti teks, nomor rekening, atas nama, dan nomor WA
+         di bagian ini sesuai data masjid Anda.
+    ================================================== -->
+    <div class="infaq-block">
+      <div class="infaq-judul"> Mari Berinfaq</div>
+      <p class="infaq-teks">
+        Salurkan infaq, sedekah, atau donasi Anda untuk mendukung kegiatan dan operasional Masjid Al-Furqan.
+        Semoga menjadi amal jariyah yang berkah. Aamiin.
+      </p>
+      <div class="infaq-rekening">
+        <div class="bank-nama">Bank Muamalat</div>
+        <div class="no-rek">3290026430</div>
+        <div class="an-rek">a.n. Yayasan Ibnu Mas'ud</div>
+      </div>
+      <a class="infaq-wa" href="https://wa.me/628128929252" target="_blank" rel="noopener">
+        Konfirmasi Infaq via WhatsApp
+      </a>
+    </div>
   </section>
 
-  <footer>Website ini otomatis mengambil data dari Google Spreadsheet.</footer>
+  <footer>© 2026 Masjid Al-Furqan Cibitung</footer>
 </main>
 
 <template id="tplKas">
@@ -401,6 +435,21 @@ table { max-width: 100%; }
     return 'Rp ' + n.toLocaleString('id-ID');
   }
 
+  // ---------- Pengumuman (dari sheet "Pengumuman" di Spreadsheet) ----------
+  apiGet("pengumuman").then(function(list){
+    const el = document.getElementById('pengumumanList');
+    if (!list || list.length === 0){
+      el.innerHTML = '<div class="empty">Belum ada pengumuman.</div>';
+      return;
+    }
+    el.innerHTML = list.map(function(p){
+      return '<div class="kajian-card">' +
+        (p.tanggal ? '<span class="tgl">' + p.tanggal + '</span>' : '') +
+        '<h3>' + p.isi + '</h3>' +
+        '</div>';
+    }).join('');
+  }).catch(showApiError);
+
 
   document.getElementById('logoMasjid').addEventListener('error', function(){
     this.style.display = 'none';
@@ -455,7 +504,63 @@ table { max-width: 100%; }
         '<div class="nama">' + w[0] + '</div>' +
         '<div class="jam">' + (w[1] || '-') + '</div></div>';
     }).join('');
+
+    mulaiCountdown(waktu);
   }).catch(showApiError);
+
+  // ---------- Countdown waktu sholat berikutnya ----------
+  let countdownTimer = null;
+  function mulaiCountdown(waktu){
+    const cdEl = document.getElementById('countdownSholat');
+    if (!cdEl) return;
+
+    // Hanya 5 waktu sholat wajib yang dihitung mundur (Terbit dilewati)
+    const jadwalSholatSaja = waktu.filter(function(w){ return w[0] !== 'Terbit'; });
+
+    function parseJamKe(dateBase, jamStr){
+      const parts = String(jamStr).split(':');
+      if (parts.length < 2) return null;
+      const d = new Date(dateBase);
+      d.setHours(parseInt(parts[0],10), parseInt(parts[1],10), 0, 0);
+      return d;
+    }
+
+    function ambilTargetBerikutnya(){
+      const now = new Date();
+      for (let i = 0; i < jadwalSholatSaja.length; i++){
+        const target = parseJamKe(now, jadwalSholatSaja[i][1]);
+        if (target && target > now){
+          return { nama: jadwalSholatSaja[i][0], waktu: target };
+        }
+      }
+      // Semua waktu hari ini sudah lewat -> hitung ke Subuh besok
+      const besok = new Date(now);
+      besok.setDate(besok.getDate() + 1);
+      const target = parseJamKe(besok, jadwalSholatSaja[0][1]);
+      return { nama: jadwalSholatSaja[0][0], waktu: target };
+    }
+
+    function render(){
+      const target = ambilTargetBerikutnya();
+      if (!target || !target.waktu){
+        cdEl.innerHTML = '';
+        return;
+      }
+      const selisih = Math.max(0, target.waktu - new Date());
+      const totalDetik = Math.floor(selisih / 1000);
+      const jam = String(Math.floor(totalDetik / 3600)).padStart(2,'0');
+      const menit = String(Math.floor((totalDetik % 3600) / 60)).padStart(2,'0');
+      const detik = String(totalDetik % 60).padStart(2,'0');
+      cdEl.innerHTML =
+        '<div class="cd-label">Menuju waktu</div>' +
+        '<div class="cd-nama">' + target.nama + '</div>' +
+        '<div class="cd-angka">' + jam + ':' + menit + ':' + detik + '</div>';
+    }
+
+    if (countdownTimer) clearInterval(countdownTimer);
+    render();
+    countdownTimer = setInterval(render, 1000);
+  }
 
   // ---------- Kajian ----------
   apiGet("kajian").then(function(list){
@@ -529,28 +634,6 @@ table { max-width: 100%; }
     select.onchange = function(){ muatRekapBulan(select.value); };
     muatRekapBulan(bulanList[0].value);
   }).catch(showApiError);
-  // ---------- Nav: klik untuk scroll ke section, highlight otomatis saat discroll ----------
-  const navButtons = document.querySelectorAll('.nav-btn');
-  navButtons.forEach(function(btn){
-    btn.addEventListener('click', function(){
-      document.getElementById(btn.dataset.target).scrollIntoView({ behavior: 'smooth' });
-    });
-  });
-
-  const navObserver = new IntersectionObserver(function(entries){
-    entries.forEach(function(entry){
-      if (entry.isIntersecting){
-        navButtons.forEach(b => b.classList.remove('active'));
-        const match = document.querySelector('.nav-btn[data-target="' + entry.target.id + '"]');
-        if (match) match.classList.add('active');
-      }
-    });
-  }, { rootMargin: '-56px 0px -70% 0px', threshold: 0 });
-
-  ['sec-sholat', 'sec-kajian', 'sec-keuangan'].forEach(function(id){
-    const el = document.getElementById(id);
-    if (el) navObserver.observe(el);
-  });
 </script>
 </body>
 </html>
