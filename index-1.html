@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Nunito+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:            #FFFFFF;
+    --sage:          #EAF3EC;   /* soft green section bg */
+    --green-deep:    #3F6B52;   /* header / heading text */
+    --green-mid:     #6F9C82;
+    --gold:          #C9A24B;   /* accent / active highlight */
+    --gold-soft:     #F6ECD6;
+    --ink:           #2B332E;   /* body text, not pure black */
+    --ink-muted:     #74847B;
+    --line:          #E4EBE6;
+    --danger-soft:   #C4736A;
+    --radius:        16px;
+    --shadow:        0 6px 24px rgba(63,107,82,0.08);
+  }
+
+  *{ box-sizing:border-box; }
+  html,body{ margin:0; padding:0; background:var(--bg); }
+  body{
+    font-family:'Nunito Sans', sans-serif;
+    color:var(--ink);
+    -webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{ font-family:'Amiri', serif; margin:0; }
+
+  /* ---------- Motif geometris (signature element) ---------- */
+  .motif{
+    position:absolute; inset:0;
+    opacity:0.14;
+    background-image:
+      linear-gradient(30deg, transparent 48%, rgba(255,255,255,.9) 48% 52%, transparent 52%),
+      linear-gradient(-30deg, transparent 48%, rgba(255,255,255,.9) 48% 52%, transparent 52%),
+      linear-gradient(90deg, transparent 48%, rgba(255,255,255,.9) 48% 52%, transparent 52%);
+    background-size: 42px 72px;
+    pointer-events:none;
+  }
+
+  /* ---------- Header ---------- */
+  header{
+    position:relative;
+    overflow:hidden;
+    background:linear-gradient(160deg, var(--green-deep), var(--green-mid));
+    color:#fff;
+    padding:28px 20px 34px;
+    text-align:center;
+  }
+  header .logo{
+    width:56px; height:56px; border-radius:50%;
+    object-fit:cover; margin-bottom:10px; border:2px solid rgba(255,255,255,.7);
+  }
+  header h1{ font-size:1.5rem; letter-spacing:.3px; }
+  header p{ margin:6px 0 0; font-size:.85rem; opacity:.9; }
+
+  /* ---------- Layout ---------- */
+  main{ max-width:520px; margin:0 auto; padding:18px 16px 60px; }
+  section{ margin-bottom:26px; }
+  .section-title{
+    font-size:1.05rem; color:var(--green-deep); margin-bottom:12px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .section-title::before{
+    content:""; width:6px; height:6px; border-radius:50%;
+    background:var(--gold); display:inline-block;
+  }
+
+  /* ---------- Kartu jadwal sholat ---------- */
+  .sholat-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:10px;
+  }
+  .sholat-card{
+    background:var(--sage); border-radius:var(--radius);
+    padding:14px 6px; text-align:center;
+    border:1px solid var(--line);
+    transition:transform .15s ease, background .15s ease;
+  }
+  .sholat-card.active{
+    background:var(--gold-soft); border-color:var(--gold);
+    transform:translateY(-2px);
+  }
+  .sholat-card .nama{ font-size:.72rem; color:var(--ink-muted); text-transform:uppercase; letter-spacing:.5px; }
+  .sholat-card.active .nama{ color:#8a6d1f; }
+  .sholat-card .jam{ font-size:1.15rem; font-weight:800; color:var(--green-deep); margin-top:4px; }
+  .sholat-card.active .jam{ color:#8a6d1f; }
+  .tgl-hari-ini{ text-align:center; color:var(--ink-muted); font-size:.8rem; margin-bottom:10px; }
+
+  /* ---------- Countdown waktu sholat berikutnya ---------- */
+  .countdown-sholat{
+    text-align:center; margin-bottom:16px;
+  }
+  .countdown-sholat .cd-label{
+    font-size:.74rem; color:var(--ink-muted); font-weight:700;
+    text-transform:uppercase; letter-spacing:.5px;
+  }
+  .countdown-sholat .cd-nama{
+    font-family:'Amiri', serif; font-size:1.1rem; color:var(--green-deep); margin:2px 0 4px;
+  }
+  .countdown-sholat .cd-angka{
+    font-size:1.6rem; font-weight:800; color:#8a6d1f;
+    font-variant-numeric:tabular-nums; letter-spacing:1px;
+  }
+  .sumber-note{ text-align:center; color:var(--ink-muted); font-size:.7rem; margin-top:10px; }
+
+  .bulan-selector{
+    display:flex; align-items:center; justify-content:space-between;
+    gap:10px; margin-bottom:14px;
+  }
+  .bulan-selector label{ font-size:.82rem; color:var(--ink-muted); font-weight:700; }
+  .bulan-selector select{
+    flex:1; font-family:inherit; font-size:.88rem; font-weight:700; color:var(--green-deep);
+    background:var(--sage); border:1px solid var(--line); border-radius:10px;
+    padding:9px 10px; appearance:none;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%233F6B52' stroke-width='3'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat:no-repeat; background-position:right 12px center;
+  }
+
+  .rekap-grid{
+    display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px;
+  }
+  .rekap-box{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:12px 14px;
+  }
+  .rekap-box .label{ font-size:.72rem; color:var(--ink-muted); }
+  .rekap-box .nilai{ font-size:1.05rem; font-weight:800; margin-top:3px; }
+  .rekap-box.masuk .nilai{ color:var(--green-deep); }
+  .rekap-box.keluar .nilai{ color:var(--danger-soft); }
+
+  .kas-block{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:16px; margin-bottom:20px; box-shadow:var(--shadow);
+  }
+  .kas-title{
+    font-family:'Nunito Sans', sans-serif; font-weight:800; font-size:1rem;
+    color:var(--green-deep); margin-bottom:12px;
+  }
+  .warn-box{
+    background:#FBEFEA; border:1px solid #E9C4B4; color:#8a4a2f;
+    border-radius:10px; padding:10px 12px; font-size:.76rem; margin-bottom:12px; line-height:1.5;
+  }
+  .saldo-ringkas{
+    display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;
+  }
+  .ringkas-item{
+    background:var(--sage); border-radius:12px; padding:10px 8px; text-align:center;
+  }
+  .ringkas-item .label{ font-size:.68rem; color:var(--ink-muted); }
+  .ringkas-item .nilai{ font-size:.85rem; font-weight:800; margin-top:3px; color:var(--green-deep); }
+  .ringkas-item.plus .nilai{ color:var(--green-deep); }
+  .ringkas-item.minus .nilai{ color:var(--danger-soft); }
+  .kas-block .saldo-card{ padding:16px; margin-bottom:14px; }
+  .kas-block table{ font-size:.78rem; }
+
+  /* ---------- Kajian ---------- */
+  .kajian-card{
+    background:#fff; border:1px solid var(--line); border-radius:var(--radius);
+    padding:14px 16px; margin-bottom:12px; box-shadow:var(--shadow);
+  }
+  .kajian-card .tgl{
+    display:inline-block; background:var(--gold-soft); color:#8a6d1f;
+    font-size:.72rem; font-weight:700; padding:3px 10px; border-radius:999px; margin-bottom:8px;
+  }
+  .kajian-card h3{ font-size:1rem; color:var(--ink); font-family:'Nunito Sans',sans-serif; font-weight:800; }
+  .kajian-card .meta{ font-size:.8rem; color:var(--ink-muted); margin-top:4px; line-height:1.5; }
+
+  /* ---------- Keuangan ---------- */
+  .saldo-card{
+    background:linear-gradient(160deg, var(--green-deep), var(--green-mid));
+    color:#fff; border-radius:var(--radius); padding:20px; text-align:center;
+    margin-bottom:16px;
+  }
+  .saldo-card .label{ font-size:.78rem; opacity:.85; }
+  .saldo-card .nilai{ font-size:1.7rem; font-weight:800; margin-top:4px; }
+
+  table{ width:100%; border-collapse:collapse; font-size:.82rem; }
+  th{ text-align:left; color:var(--ink-muted); font-weight:700; padding:8px 6px; border-bottom:1px solid var(--line); }
+  td{ padding:9px 6px; border-bottom:1px solid var(--line); vertical-align:top; }
+  .jenis-masuk{ color:var(--green-deep); font-weight:700; }
+  .jenis-keluar{ color:var(--danger-soft); font-weight:700; }
+
+  .empty{ text-align:center; color:var(--ink-muted); font-size:.85rem; padding:24px 0; }
+  footer{ text-align:center; color:var(--ink-muted); font-size:.72rem; padding:10px 0 30px; }
+
+  /* ---------- Ajakan Infaq ---------- */
+  .infaq-block{
+    background:linear-gradient(160deg, var(--gold-soft), #fff);
+    border:1px solid var(--gold); border-radius:var(--radius);
+    padding:18px; margin-top:18px; text-align:center;
+  }
+  .infaq-judul{ font-family:'Amiri', serif; font-size:1.15rem; color:#8a6d1f; margin-bottom:8px; }
+  .infaq-teks{ font-size:.85rem; color:var(--ink); line-height:1.55; margin:0 0 14px; }
+  .infaq-rekening{
+    background:#fff; border:1px solid var(--line); border-radius:12px;
+    padding:12px; margin-bottom:14px;
+  }
+  .infaq-rekening .bank-nama{ font-size:.78rem; color:var(--ink-muted); font-weight:700; }
+  .infaq-rekening .no-rek{ font-size:1.15rem; font-weight:800; color:var(--green-deep); margin:3px 0; letter-spacing:.5px; }
+  .infaq-rekening .an-rek{ font-size:.78rem; color:var(--ink-muted); }
+  .infaq-wa{
+    display:inline-block; background:var(--green-deep); color:#fff; text-decoration:none;
+    font-weight:700; font-size:.85rem; padding:12px 22px; border-radius:999px;
+    transition:transform .15s ease;
+  }
+  .infaq-wa:active{ transform:scale(.97); }
+
+  @media (prefers-reduced-motion: reduce){
+    .sholat-card{ transition:none; }
+  }
+
+  html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+  body{width:100%;min-width:0;overflow-x:hidden}
+  header{padding:24px 16px 30px}
+  header .logo{width:72px;height:72px;display:block;margin:0 auto 10px;border-radius:50%;object-fit:cover}
+  header h1{font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.25;overflow-wrap:anywhere}
+  header p{font-size:.82rem;line-height:1.45;overflow-wrap:anywhere}
+  main{width:100%;max-width:720px;margin:0 auto;padding:16px 12px 42px}
+  section{width:100%;margin-bottom:24px}
+  .section-title{font-size:1rem}
+  .sholat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  .sholat-card{min-width:0;padding:13px 6px}
+  .rekap-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .saldo-ringkas{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .kas-block{padding:12px;overflow:hidden}
+  .kas-title{line-height:1.35}
+  .kas-block table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+  .kas-block th,.kas-block td{padding:8px 6px}
+  .kajian-card{padding:13px 14px}
+  .bulan-selector select{min-width:0}
+  @media (min-width:560px){.sholat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  @media (max-width:380px){
+    main{padding-left:10px;padding-right:10px}
+    .sholat-grid{gap:6px}
+    .sholat-card .jam{font-size:1rem}
+    .saldo-ringkas{gap:5px}
+    .ringkas-item{padding:9px 4px}
+    .ringkas-item .nilai{font-size:.76rem}
+    .rekap-grid{grid-template-columns:1fr}
+  }
+
+
+/* FINAL MOBILE RESPONSIVE */
+html{width:100%;overflow-x:hidden;-webkit-text-size-adjust:100%}
+body{width:100%;min-width:0;overflow-x:hidden}
+header{padding:24px 16px 30px}
+header .logo{width:72px;height:72px;display:block;margin:0 auto 10px;border-radius:50%;object-fit:cover}
+header h1{font-size:clamp(1.25rem,5vw,1.6rem);line-height:1.25;overflow-wrap:anywhere}
+header p{font-size:.82rem;line-height:1.45;overflow-wrap:anywhere}
+main{width:100%;max-width:720px;margin:0 auto;padding:16px 12px 42px}
+section{width:100%;margin-bottom:24px}
+.sholat-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.sholat-card{min-width:0;padding:13px 6px}
+.rekap-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+.saldo-ringkas{grid-template-columns:repeat(3,minmax(0,1fr))}
+.kas-block{padding:12px;overflow:hidden}
+.kas-block table{display:block;width:100%;overflow-x:auto;-webkit-overflow-scrolling:touch;white-space:nowrap}
+.kas-block th,.kas-block td{padding:8px 6px}
+@media (min-width:560px){.sholat-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+@media (max-width:380px){
+ main{padding-left:10px;padding-right:10px}
+ .saldo-ringkas{gap:5px}
+ .rekap-grid{grid-template-columns:1fr}
+}
+
+
+/* FINAL MOBILE VIEWPORT FIX */
+img, svg, video, canvas { max-width: 100%; height: auto; }
+button, input, select, textarea { max-width: 100%; font: inherit; }
+table { max-width: 100%; }
+.card, .section, .kajian-card, .kas-block, .rekap-card { max-width: 100%; }
+@media (max-width: 600px) {
+  body { font-size: 14px; }
+  header { padding-left: 14px; padding-right: 14px; }
+  main { padding-left: 10px; padding-right: 10px; }
+  .sholat-grid, .rekap-grid { width: 100%; }
+}
+
+</style>
+</head>
+<body>
+
+<header>
+  <div class="motif"></div>
+  <img class="logo" id="logoMasjid" style="display:none;">
+  <h1 id="namaMasjid">Memuat...</h1>
+  <p id="alamatMasjid"></p>
+</header>
+
+<main>
+  <section id="sec-sholat">
+    <div class="section-title">Jadwal Sholat Hari Ini</div>
+    <div class="tgl-hari-ini" id="tglHariIni"></div>
+    <div class="countdown-sholat" id="countdownSholat"></div>
+    <div class="sholat-grid" id="sholatGrid"></div>
+    <div class="sumber-note" id="sumberSholat"></div>
+  </section>
+
+  <section id="sec-kajian">
+    <div class="section-title">Jadwal Kajian</div>
+    <div id="kajianList"></div>
+  </section>
+
+  <section id="sec-pengumuman">
+    <div class="section-title">Pengumuman</div>
+    <div id="pengumumanList"></div>
+  </section>
+
+  <section id="sec-keuangan">
+    <div class="section-title">Laporan Keuangan</div>
+    <div class="bulan-selector">
+      <label for="pilihBulan">Bulan</label>
+      <select id="pilihBulan"></select>
+    </div>
+
+    <div id="kasContainer"></div>
+
+    <!-- ================= AJAKAN INFAQ =================
+         Ganti teks, nomor rekening, atas nama, dan nomor WA
+         di bagian ini sesuai data masjid Anda.
+    ================================================== -->
+    <div class="infaq-block">
+      <div class="infaq-judul">🤲 Mari Berinfaq</div>
+      <p class="infaq-teks">
+        Salurkan infaq, sedekah, atau donasi Anda untuk mendukung kegiatan dan operasional Masjid Al-Furqan.
+        Semoga menjadi amal jariyah yang berkah. Aamiin.
+      </p>
+      <div class="infaq-rekening">
+        <div class="bank-nama">Bank ___ (ganti nama bank)</div>
+        <div class="no-rek">___-___-___-___ (ganti nomor rekening)</div>
+        <div class="an-rek">a.n. ___ (ganti atas nama)</div>
+      </div>
+      <a class="infaq-wa" href="https://wa.me/62__________" target="_blank" rel="noopener">
+        Konfirmasi Infaq via WhatsApp
+      </a>
+    </div>
+  </section>
+
+  <footer>© 2026 Masjid Al-Furqan Cibitung — [ganti teks footer di sini]</footer>
+</main>
+
+<template id="tplKas">
+  <div class="kas-block">
+    <h3 class="kas-title"></h3>
+    <div class="warn-box" style="display:none;"></div>
+
+    <div class="saldo-ringkas">
+      <div class="ringkas-item">
+        <div class="label">Saldo Bulan Sebelumnya</div>
+        <div class="nilai saldo-awal">Rp 0</div>
+      </div>
+      <div class="ringkas-item plus">
+        <div class="label">Pendapatan</div>
+        <div class="nilai total-pendapatan">Rp 0</div>
+      </div>
+      <div class="ringkas-item minus">
+        <div class="label">Pengeluaran</div>
+        <div class="nilai total-pengeluaran">Rp 0</div>
+      </div>
+    </div>
+
+    <div class="saldo-card">
+      <div class="label">Saldo Akhir Bulan</div>
+      <div class="nilai saldo-akhir">Rp 0</div>
+    </div>
+
+    <table>
+      <thead>
+        <tr><th>Tanggal</th><th>Transaksi</th><th>Jenis</th><th>Jumlah</th></tr>
+      </thead>
+      <tbody class="keuangan-body"></tbody>
+    </table>
+  </div>
+</template>
+
+<script>
+
+  // =========================================================
+  // KONFIGURASI API
+  // Ganti URL_API dengan URL Web App Apps Script setelah deploy.
+  // =========================================================
+  const URL_API = 'https://script.google.com/macros/s/AKfycbwPXaxdaxyHBADQjQ_oN6KH0SGVF0ZC8i3qaQyKUHQZQKCanGv-YHcp6viE0P2o_ajj/exec';
+
+  async function apiGet(action, params = {}) {
+    const url = new URL(URL_API);
+    url.searchParams.set('action', action);
+
+    Object.keys(params).forEach(function(key) {
+      if (params[key] !== undefined && params[key] !== null) {
+        url.searchParams.set(key, params[key]);
+      }
+    });
+
+    console.log('[API] Request:', url.toString());
+
+    try {
+      const response = await fetch(url.toString(), {
+        method: 'GET',
+        mode: 'cors',
+        cache: 'no-store'
+      });
+
+      console.log('[API] HTTP:', response.status, response.statusText);
+
+      const text = await response.text();
+      console.log('[API] Response:', text);
+
+      let result;
+      try {
+        result = JSON.parse(text);
+      } catch (parseError) {
+        throw new Error('Respons API bukan JSON: ' + text.substring(0, 300));
+      }
+
+      if (!result.ok) {
+        throw new Error(result.error || 'API mengembalikan error.');
+      }
+
+      return result.data;
+    } catch (error) {
+      console.error('[API] Gagal:', action, error);
+      throw error;
+    }
+  }
+  function showApiError(err){
+    console.error('[API]', err);
+  }
+
+  function formatRupiah(n){
+    n = Number(n) || 0;
+    return 'Rp ' + n.toLocaleString('id-ID');
+  }
+
+  // ---------- Pengumuman (dari sheet "Pengumuman" di Spreadsheet) ----------
+  apiGet("pengumuman").then(function(list){
+    const el = document.getElementById('pengumumanList');
+    if (!list || list.length === 0){
+      el.innerHTML = '<div class="empty">Belum ada pengumuman.</div>';
+      return;
+    }
+    el.innerHTML = list.map(function(p){
+      return '<div class="kajian-card">' +
+        (p.tanggal ? '<span class="tgl">' + p.tanggal + '</span>' : '') +
+        '<h3>' + p.isi + '</h3>' +
+        '</div>';
+    }).join('');
+  }).catch(showApiError);
+
+
+  document.getElementById('logoMasjid').addEventListener('error', function(){
+    this.style.display = 'none';
+  });
+
+
+  const logoMasjid = document.getElementById('logoMasjid');
+  if (logoMasjid) {
+    logoMasjid.addEventListener('error', function(){ this.style.display = 'none'; });
+  }
+
+  // ---------- Info Masjid ----------
+  apiGet("info").then(function(info){
+    document.getElementById('namaMasjid').textContent = info.NamaMasjid || 'Nama Masjid';
+    document.getElementById('alamatMasjid').textContent = info.Alamat || '';
+    if (info.LogoURL){
+      const img = document.getElementById('logoMasjid');
+      img.src = info.LogoURL;
+      img.style.display = 'inline-block';
+    }
+  }).catch(showApiError);
+
+  // ---------- Jadwal Sholat (dari sheet, diisi manual dari data Kemenag) ----------
+  apiGet("jadwal").then(function(jadwal){
+    const grid = document.getElementById('sholatGrid');
+    const tglEl = document.getElementById('tglHariIni');
+    const sumberEl = document.getElementById('sumberSholat');
+    if (!jadwal){
+      tglEl.textContent = '';
+      sumberEl.textContent = '';
+      grid.innerHTML = '<div class="empty" style="grid-column:1/-1;">Jadwal untuk hari ini belum tersedia di Spreadsheet.</div>';
+      return;
+    }
+    tglEl.textContent = jadwal.tanggal;
+    sumberEl.textContent = '';
+    const waktu = [
+      ['Subuh', jadwal.subuh], ['Terbit', jadwal.terbit], ['Dzuhur', jadwal.dzuhur],
+      ['Ashar', jadwal.ashar], ['Maghrib', jadwal.maghrib], ['Isya', jadwal.isya]
+    ];
+    const now = new Date();
+    const nowMin = now.getHours()*60 + now.getMinutes();
+    let activeIdx = -1, bestDiff = Infinity;
+    waktu.forEach(function(w, idx){
+      const parts = String(w[1]).split(':');
+      if (parts.length < 2) return;
+      const mins = parseInt(parts[0],10)*60 + parseInt(parts[1],10);
+      const diff = nowMin - mins;
+      if (diff >= 0 && diff < bestDiff){ bestDiff = diff; activeIdx = idx; }
+    });
+    grid.innerHTML = waktu.map(function(w, idx){
+      return '<div class="sholat-card' + (idx===activeIdx ? ' active' : '') + '">' +
+        '<div class="nama">' + w[0] + '</div>' +
+        '<div class="jam">' + (w[1] || '-') + '</div></div>';
+    }).join('');
+
+    mulaiCountdown(waktu);
+  }).catch(showApiError);
+
+  // ---------- Countdown waktu sholat berikutnya ----------
+  let countdownTimer = null;
+  function mulaiCountdown(waktu){
+    const cdEl = document.getElementById('countdownSholat');
+    if (!cdEl) return;
+
+    // Hanya 5 waktu sholat wajib yang dihitung mundur (Terbit dilewati)
+    const jadwalSholatSaja = waktu.filter(function(w){ return w[0] !== 'Terbit'; });
+
+    function parseJamKe(dateBase, jamStr){
+      const parts = String(jamStr).split(':');
+      if (parts.length < 2) return null;
+      const d = new Date(dateBase);
+      d.setHours(parseInt(parts[0],10), parseInt(parts[1],10), 0, 0);
+      return d;
+    }
+
+    function ambilTargetBerikutnya(){
+      const now = new Date();
+      for (let i = 0; i < jadwalSholatSaja.length; i++){
+        const target = parseJamKe(now, jadwalSholatSaja[i][1]);
+        if (target && target > now){
+          return { nama: jadwalSholatSaja[i][0], waktu: target };
+        }
+      }
+      // Semua waktu hari ini sudah lewat -> hitung ke Subuh besok
+      const besok = new Date(now);
+      besok.setDate(besok.getDate() + 1);
+      const target = parseJamKe(besok, jadwalSholatSaja[0][1]);
+      return { nama: jadwalSholatSaja[0][0], waktu: target };
+    }
+
+    function render(){
+      const target = ambilTargetBerikutnya();
+      if (!target || !target.waktu){
+        cdEl.innerHTML = '';
+        return;
+      }
+      const selisih = Math.max(0, target.waktu - new Date());
+      const totalDetik = Math.floor(selisih / 1000);
+      const jam = String(Math.floor(totalDetik / 3600)).padStart(2,'0');
+      const menit = String(Math.floor((totalDetik % 3600) / 60)).padStart(2,'0');
+      const detik = String(totalDetik % 60).padStart(2,'0');
+      cdEl.innerHTML =
+        '<div class="cd-label">Menuju waktu</div>' +
+        '<div class="cd-nama">' + target.nama + '</div>' +
+        '<div class="cd-angka">' + jam + ':' + menit + ':' + detik + '</div>';
+    }
+
+    if (countdownTimer) clearInterval(countdownTimer);
+    render();
+    countdownTimer = setInterval(render, 1000);
+  }
+
+  // ---------- Kajian ----------
+  apiGet("kajian").then(function(list){
+    const el = document.getElementById('kajianList');
+    if (!list || list.length === 0){
+      el.innerHTML = '<div class="empty">Belum ada jadwal kajian.</div>';
+      return;
+    }
+    el.innerHTML = list.map(function(k){
+      return '<div class="kajian-card">' +
+        '<span class="tgl">' + k.tanggal + (k.waktu ? ' • ' + k.waktu : '') + '</span>' +
+        '<h3>' + k.tema + '</h3>' +
+        '<div class="meta">Pemateri: ' + (k.pemateri || '-') + '<br>Lokasi: ' + (k.lokasi || '-') + '</div>' +
+        '</div>';
+    }).join('');
+  }).catch(showApiError);
+
+  // ---------- Keuangan (2 kas ditampilkan sekaligus, saldo awal dibawa dari bulan sebelumnya) ----------
+  function renderSatuKas(container, judul, rekap){
+    const block = document.getElementById('tplKas').content.cloneNode(true);
+
+    block.querySelector('.kas-title').textContent = judul + ' — ' + rekap.label;
+    block.querySelector('.saldo-awal').textContent = formatRupiah(rekap.saldoAwal);
+    block.querySelector('.total-pendapatan').textContent = '+ ' + formatRupiah(rekap.totalPendapatan);
+    block.querySelector('.total-pengeluaran').textContent = '- ' + formatRupiah(rekap.totalPengeluaran);
+    block.querySelector('.saldo-akhir').textContent = formatRupiah(rekap.saldoAkhir);
+
+    const warnBox = block.querySelector('.warn-box');
+    if (rekap.peringatan && rekap.peringatan.length > 0){
+      warnBox.style.display = 'block';
+      warnBox.innerHTML = '⚠️ Ada data perlu diperiksa:<br>' + rekap.peringatan.join('<br>');
+    }
+
+    const body = block.querySelector('.keuangan-body');
+    if (!rekap.transaksi || rekap.transaksi.length === 0){
+      body.innerHTML = '<tr><td colspan="4" class="empty">Belum ada transaksi bulan ini.</td></tr>';
+    } else {
+      body.innerHTML = rekap.transaksi.map(function(t){
+        const masuk = (String(t.jenis).trim().toLowerCase() === 'pendapatan');
+        const cls = masuk ? 'jenis-masuk' : 'jenis-keluar';
+        const sign = masuk ? '+ ' : '- ';
+        return '<tr><td>' + t.tanggal + '</td><td>' + t.nama + '</td>' +
+          '<td class="' + cls + '">' + t.jenis + '</td>' +
+          '<td class="' + cls + '">' + sign + formatRupiah(t.nominal) + '</td></tr>';
+      }).join('');
+    }
+
+    return block;
+  }
+
+  function muatRekapBulan(bulanValue){
+    const kasContainer = document.getElementById('kasContainer');
+    kasContainer.innerHTML = '<div class="empty">Memuat...</div>';
+    apiGet("rekap", { bulan: bulanValue }).then(function(data){
+      kasContainer.innerHTML = '';
+      kasContainer.appendChild(renderSatuKas(kasContainer, 'Kas Operasional Dakwah', data.dakwah));
+      kasContainer.appendChild(renderSatuKas(kasContainer, "Kas Usaha Yayasan Ibnu Mas'ud", data.usaha));
+    }).catch(showApiError);
+  }
+
+  apiGet("bulan").then(function(bulanList){
+    const select = document.getElementById('pilihBulan');
+    if (!bulanList || bulanList.length === 0){
+      select.innerHTML = '<option>Belum ada data</option>';
+      document.getElementById('kasContainer').innerHTML = '<div class="empty">Belum ada transaksi.</div>';
+      return;
+    }
+    select.innerHTML = bulanList.map(function(b){
+      return '<option value="' + b.value + '">' + b.label + '</option>';
+    }).join('');
+    select.onchange = function(){ muatRekapBulan(select.value); };
+    muatRekapBulan(bulanList[0].value);
+  }).catch(showApiError);
+</script>
+</body>
+</html>
