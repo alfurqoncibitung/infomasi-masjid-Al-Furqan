@@ -330,9 +330,9 @@ table { max-width: 100%; }
         Semoga menjadi amal jariyah yang berkah. Aamiin.
       </p>
       <div class="infaq-rekening">
-        <div class="bank-nama">Bank Mu'amalat</div>
+        <div class="bank-nama">Bank Mu'amalat </div>
         <div class="no-rek">3290026430</div>
-        <div class="an-rek">a.n. Yayasan Ibnu Mas'ud</div>
+        <div class="an-rek">a.n.Yayasan Ibnu Mas'ud</div>
       </div>
       <a class="infaq-wa" href="https://wa.me/628128929252" target="_blank" rel="noopener">
         Konfirmasi Infaq via WhatsApp
@@ -340,7 +340,7 @@ table { max-width: 100%; }
     </div>
   </section>
 
-  <footer>© 2026 Masjid Al-Furqan Cibitung</footer>
+  <footer>© 2026 Masjid Al-Furqan Cibitung (Menara Tauhid)</footer>
 </main>
 
 <template id="tplKas">
@@ -611,14 +611,24 @@ table { max-width: 100%; }
     return block;
   }
 
+  // Penanda permintaan terakhir, supaya kalau ganti bulan dengan cepat,
+  // respons dari bulan sebelumnya yang datang belakangan TIDAK menimpa
+  // tampilan bulan yang sedang dipilih sekarang.
+  let permintaanRekapTerakhir = 0;
+
   function muatRekapBulan(bulanValue){
     const kasContainer = document.getElementById('kasContainer');
     kasContainer.innerHTML = '<div class="empty">Memuat...</div>';
+    const idPermintaanIni = ++permintaanRekapTerakhir;
     apiGet("rekap", { bulan: bulanValue }).then(function(data){
+      if (idPermintaanIni !== permintaanRekapTerakhir) return; // sudah keburu ganti bulan lain, abaikan
       kasContainer.innerHTML = '';
       kasContainer.appendChild(renderSatuKas(kasContainer, 'Kas Operasional Dakwah', data.dakwah));
       kasContainer.appendChild(renderSatuKas(kasContainer, "Kas Usaha Yayasan Ibnu Mas'ud", data.usaha));
-    }).catch(showApiError);
+    }).catch(function(err){
+      if (idPermintaanIni !== permintaanRekapTerakhir) return;
+      showApiError(err);
+    });
   }
 
   apiGet("bulan").then(function(bulanList){
